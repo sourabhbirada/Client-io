@@ -1,23 +1,23 @@
 const { io } = require("socket.io-client");
-const matchId = "87826"  
-
-const user1Socket = io("http://localhost:3302/matches");
-                
-// Step 3: Handle WebSocket events    
-user1Socket.on("connect", () => {
-  console.log(`✅ Connected to WebSocket with ID: ${user1Socket.id}`);
+const matchId = "87007";  
+const USER_COUNT = 100;  // Number of users to simulate
  
-  // Join the match room  
-  user1Socket.emit("join-room", matchId);
-  console.log(`Joining match room: ${matchId}`); 
-}); 
+for (let i = 1; i <= USER_COUNT; i++) {
+  const userSocket = io("http://localhost:3302/matches");
 
-user1Socket.on("liveData", (data) => {
-  console.log("📡 Received Live Data:", data);
-});  
+  userSocket.on("connect", () => {    
+    console.log(`✅ User ${i} connected with ID: ${userSocket.id}`);
 
+    // Join the match room
+    userSocket.emit("join-room", matchId);
+    console.log(`User ${i} joining match room: ${matchId}`);
+  });
 
-user1Socket.on("redirect", (data) => {     
-  console.log(data.message); 
-  // window.location.href = "/"; // Replace "/" with your home page URL
-});  
+  userSocket.on("liveData", (data) => { 
+    console.log(`📡 User ${i} received live data:`, data); 
+  });
+
+  userSocket.on("redirect", (data) => {      
+    console.log(`User ${i} received redirect: ${data.message}`); 
+  });
+}
